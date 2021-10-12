@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
-import com.glebkrep.yandexcup.yoga.breatheDetector.BreathingDetector
+import com.glebkrep.yandexcup.yoga.features.breatheDetector.BreathingDetector
 import com.glebkrep.yandexcup.yoga.ui.Screen
 import com.glebkrep.yandexcup.yoga.utils.getActivity
 
@@ -18,6 +18,7 @@ fun HomePage(outterNavController: NavController) {
 
     Column(Modifier.fillMaxSize()) {
         Button(onClick = {
+            //todo catch response with onActivityResult and pass it here
             if (BreathingDetector.requestPermission(
                     context.getActivity() ?: throw Exception("Activity can't be null")
                 )

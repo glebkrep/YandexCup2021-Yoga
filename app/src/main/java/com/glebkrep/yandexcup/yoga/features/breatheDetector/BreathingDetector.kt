@@ -1,4 +1,4 @@
-package com.glebkrep.yandexcup.yoga.breatheDetector
+package com.glebkrep.yandexcup.yoga.features.breatheDetector
 
 import android.Manifest
 import android.app.Activity
