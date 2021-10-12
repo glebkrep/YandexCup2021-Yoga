@@ -4,8 +4,10 @@ import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.example.yandexcup.R
+import com.glebkrep.yandexcup.yoga.R
 
-sealed class Screen(val route: String, @StringRes val resourceId: Int) {
-    object Home : Screen("home", R.string.home)
+sealed class Screen(val route: String) {
+    object Home : Screen("Home")
+    object BreathingPage : Screen("BreathingPage")
+
 }

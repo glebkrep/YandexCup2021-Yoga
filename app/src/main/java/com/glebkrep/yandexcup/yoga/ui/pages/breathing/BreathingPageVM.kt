@@ -22,15 +22,13 @@ class BreathingPageVM(application: Application) : AndroidViewModel(application) 
     fun startRecording() {
         viewModelScope.launch(Dispatchers.Default) {
             breathingDetector.startRecording(200) {
-                launch(Dispatchers.Default) {
-                    breathingDetected(it)
-                }
+                breathingDetected(it)
             }
         }
     }
 
-    private suspend fun breathingDetected(detectorMessage: BreathingState) {
-        if (detectorMessage !is BreathingState.PrevBreath){
+    private fun breathingDetected(detectorMessage: BreathingState) {
+        if (detectorMessage !is BreathingState.PrevState){
             stateFinished(_breathingState.value)
         }
         when (detectorMessage) {
@@ -45,17 +43,18 @@ class BreathingPageVM(application: Application) : AndroidViewModel(application) 
                 _breathingState.postValue(detectorMessage)
 
             }
-            is BreathingState.PrevBreath -> {
+            is BreathingState.PrevState -> {
 
             }
         }
     }
 
-    private suspend fun stateFinished(breathingState: BreathingState?){
+    private fun stateFinished(breathingState: BreathingState?){
         if (breathingState==null){
             Debug.log("breathing state is null")
         }
-        TODO("save to db")
+        Debug.log("state finished")
+//        TODO("save to db")
     }
 
     override fun onCleared() {

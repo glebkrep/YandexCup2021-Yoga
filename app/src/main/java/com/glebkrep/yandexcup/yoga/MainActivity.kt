@@ -9,7 +9,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.glebkrep.yandexcup.yoga.ui.Screen
-import com.glebkrep.yandexcup.yoga.ui.pages.HomePage
+import com.glebkrep.yandexcup.yoga.ui.pages.breathing.BreathingPage
+import com.glebkrep.yandexcup.yoga.ui.pages.home.HomePage
 import com.glebkrep.yandexcup.yoga.ui.theme.YogaTheme
 
 //Алёна очень любит заниматься йогой, но постоянно забывает дышать правильно.
@@ -35,6 +36,8 @@ class MainActivity : ComponentActivity() {
                         startDestination = Screen.Home.route
                     ) {
                         composable(Screen.Home.route) { HomePage(mainNavController) }
+                        composable(Screen.BreathingPage.route) { BreathingPage() }
+
                     }
                 }
             }

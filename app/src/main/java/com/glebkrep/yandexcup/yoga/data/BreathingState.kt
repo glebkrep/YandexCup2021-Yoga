@@ -1,10 +1,12 @@
 package com.glebkrep.yandexcup.yoga.data
 
-sealed class BreathingState {
-    object NotStarted:BreathingState()
-    object PrevBreath:BreathingState()
-    data class BreatheIn(val startTimeStamp:Long):BreathingState()
-    data class BreatheOut(val startTimeStamp:Long):BreathingState()
-    data class Silence(val startTimeStamp:Long):BreathingState()
-    data class Error(val e:Throwable):BreathingState()
+import com.glebkrep.yandexcup.yoga.breatheDetector.BreathingDetector
+
+sealed class BreathingState(val label:String) {
+    object NotStarted:BreathingState("Not Started")
+    object PrevState:BreathingState("")
+    data class BreatheIn(val startTimeStamp:Long):BreathingState(BreathingDetector.BREATHING)
+    data class BreatheOut(val startTimeStamp:Long):BreathingState(BreathingDetector.BREATHING)
+    data class Silence(val startTimeStamp:Long):BreathingState("")
+    data class Error(val e:Throwable):BreathingState("")
 }

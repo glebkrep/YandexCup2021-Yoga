@@ -3,7 +3,9 @@ package com.glebkrep.yandexcup.yoga.breatheDetector
 import android.Manifest
 import android.app.Activity
 import android.content.Context
+import android.content.pm.PackageManager
 import android.media.AudioRecord
+import androidx.core.content.ContextCompat
 import com.glebkrep.yandexcup.yoga.data.BreathingState
 import com.glebkrep.yandexcup.yoga.utils.Debug
 import org.tensorflow.lite.support.audio.TensorAudio
@@ -16,53 +18,54 @@ class BreathingDetector(context: Context) {
     private val tensorAudio: TensorAudio = classifier.createInputTensorAudio()
     private val record: AudioRecord = classifier.createAudioRecord()
 
-    private var timerTask : TimerTask? = null
+    private var timerTask: TimerTask? = null
 
-    fun startRecording(intervalMillis:Long = 500, detectedSound:(BreathingState)->(Unit)) {
+    fun startRecording(intervalMillis: Long = 500, detectedSound: (BreathingState) -> (Unit)) {
         record.startRecording()
 
-        var lastBreathe:BreathingState = BreathingState.BreatheOut(0L)
-        var hadSilence = true
+        var lastState: BreathingState = BreathingState.NotStarted
+        var lastBreathe: BreathingState = BreathingState.BreatheOut(0L)
         timerTask = Timer().scheduleAtFixedRate(1, intervalMillis) {
             tensorAudio.load(record)
             val output = classifier.classify(tensorAudio)
 
             val filteredModelOutput = output[0].categories.filter {
                 (it.score > PROBABILITY_THRESHOLD) &&
-                        it.label in listOf(BREATHING, SILENCE)
+                        it.label in listOf(BREATHING)
             }
-
+            Debug.log("BreathingDetector: output: ${filteredModelOutput.map { it.label }}")
             val outputClassifications = filteredModelOutput.maxByOrNull { it.score }
-            val startTime:Long = System.currentTimeMillis()
-            when (outputClassifications?.label){
-                null, SILENCE -> {
+            val startTime: Long = System.currentTimeMillis()
+
+            if (outputClassifications?.label?:"" == lastState.label) {
+                //this is continuation of previous state
+                Debug.log("BreathingDetector: prev state")
+                detectedSound.invoke(BreathingState.PrevState)
+                return@scheduleAtFixedRate
+            }
+            when (outputClassifications?.label) {
+                null -> {
                     //this is silence
                     Debug.log("BreathingDetector: silence")
-                    hadSilence = true
-                    detectedSound.invoke(BreathingState.Silence(startTime))
+                    lastState = BreathingState.Silence(startTime)
+                    detectedSound.invoke(lastState)
                 }
                 BREATHING -> {
-                    if (hadSilence){
-                        hadSilence = false
-                        when(lastBreathe){
-                            is BreathingState.BreatheIn->{
-                                //this is breathe out
-                                Debug.log("BreathingDetector: breathe out")
-                                lastBreathe = BreathingState.BreatheOut(startTime)
-                                detectedSound.invoke(BreathingState.BreatheOut(startTime))
-                            }
-                            else ->{
-                                //this is breathe in
-                                Debug.log("BreathingDetector: breathe in")
-                                lastBreathe = BreathingState.BreatheIn(startTime)
-                                detectedSound.invoke(BreathingState.BreatheIn(startTime))
-                            }
+                    when (lastBreathe) {
+                        is BreathingState.BreatheIn -> {
+                            //this is breathe out
+                            Debug.log("BreathingDetector: breathe out")
+                            lastBreathe = BreathingState.BreatheOut(startTime)
+                            lastState = lastBreathe
+                            detectedSound.invoke(lastBreathe)
                         }
-                    }
-                    else{
-                        //this is continuation of previous breathe
-                        Debug.log("BreathingDetector: prev breath")
-                        detectedSound.invoke(BreathingState.PrevBreath)
+                        else -> {
+                            //this is breathe in
+                            Debug.log("BreathingDetector: breathe in")
+                            lastBreathe = BreathingState.BreatheIn(startTime)
+                            lastState = lastBreathe
+                            detectedSound.invoke(lastBreathe)
+                        }
                     }
                 }
             }
@@ -70,9 +73,10 @@ class BreathingDetector(context: Context) {
         }
     }
 
-    fun pauseRecording() {
+    private fun pauseRecording() {
         record.stop()
         timerTask?.cancel()
+        timerTask = null
     }
 
     fun stop() {
@@ -81,18 +85,24 @@ class BreathingDetector(context: Context) {
     }
 
     companion object {
-        private const val SILENCE = "Silence"
-        private const val BREATHING = "Breathing"
+        const val SILENCE = "Silence"
+        const val BREATHING = "Breathing"
 
         private const val MODEL_PATH = "lite-model_yamnet_classification_tflite_1.tflite"
         private const val PROBABILITY_THRESHOLD: Float = 0.1f
         const val REQUEST_RECORD_AUDIO = 1337
 
-        fun requestPermission(activity: Activity) {
-            activity.requestPermissions(
-                arrayOf(Manifest.permission.RECORD_AUDIO),
-                REQUEST_RECORD_AUDIO
-            )
+        fun requestPermission(activity: Activity): Boolean {
+            val check =
+                ContextCompat.checkSelfPermission(activity, Manifest.permission.RECORD_AUDIO)
+            if (check != PackageManager.PERMISSION_GRANTED) {
+                activity.requestPermissions(
+                    arrayOf(Manifest.permission.RECORD_AUDIO),
+                    REQUEST_RECORD_AUDIO
+                )
+                return false
+            }
+            return true
         }
     }
 }
