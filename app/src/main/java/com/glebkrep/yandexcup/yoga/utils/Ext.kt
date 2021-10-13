@@ -3,6 +3,7 @@ package com.glebkrep.yandexcup.yoga.utils
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
+import android.util.Patterns
 import com.glebkrep.yandexcup.yoga.data.BreathingItem
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -27,6 +28,8 @@ fun Long.millisToSeconds():String{
 }
 
 fun Long.millisToHMS():String{
-    val time = SimpleDateFormat("MM.dd HH:mm:ss").format(Date(this))
+    val time = SimpleDateFormat("HH:mm:ss").format(Date(this))
     return time
 }
+
+fun CharSequence?.isValidEmail() = !isNullOrEmpty() && Patterns.EMAIL_ADDRESS.matcher(this).matches()

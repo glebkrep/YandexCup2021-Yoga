@@ -15,8 +15,8 @@ data class BreathingItem(
     val endTimestamp:Long,
 )
 
-enum class TypeBreath{
-    PAUSE,
-    BREATHE_IN,
-    BREATHE_OUT
+enum class TypeBreath(val label:String){
+    PAUSE("Пауза"),
+    BREATHE_IN("Вдох"),
+    BREATHE_OUT("Выдох")
 }

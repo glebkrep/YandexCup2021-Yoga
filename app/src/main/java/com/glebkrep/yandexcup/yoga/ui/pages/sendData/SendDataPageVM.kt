@@ -3,7 +3,8 @@ package com.glebkrep.yandexcup.yoga.ui.pages.sendData
 import android.app.Activity
 import android.app.Application
 import android.content.ActivityNotFoundException
-import android.os.Debug
+import android.content.Intent
+import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.glebkrep.yandexcup.yoga.data.BreathingItem
@@ -12,22 +13,11 @@ import com.glebkrep.yandexcup.yoga.data.repository.BreathingRoomDatabase
 import com.glebkrep.yandexcup.yoga.features.reportBuilder.ReportBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import androidx.core.content.ContextCompat.startActivity
 
-import android.content.Intent
-import android.net.Uri
-import android.widget.Toast
-
-import androidx.core.content.ContextCompat.startActivity
-
-
-
-
-
-class SendDataPageVM(application: Application):AndroidViewModel(application) {
+class SendDataPageVM(application: Application) : AndroidViewModel(application) {
     private var breathingItemRepository: BreathingItemRepository? = null
+
     init {
         viewModelScope.launch(Dispatchers.IO) {
             breathingItemRepository = BreathingItemRepository(
@@ -36,26 +26,30 @@ class SendDataPageVM(application: Application):AndroidViewModel(application) {
         }
     }
 
-    fun sendEmail(email:String, activity: Activity){
+    fun sendEmail(email: String, activity: Activity) {
         val repositorySnapshot = breathingItemRepository ?: return
         val job = viewModelScope.launch(Dispatchers.Default) {
             repositorySnapshot.getAllBreathingItems()
                 .collect {
-                    sendEmailWithData(email =email,it,activity)
+                    sendEmailWithData(email = email, it, activity)
                 }
         }
     }
 
-    private suspend fun sendEmailWithData(email: String,data:List<BreathingItem>,activity:Activity){
-        if (data.isEmpty()){
+    private fun sendEmailWithData(
+        email: String,
+        data: List<BreathingItem>,
+        activity: Activity
+    ) {
+        if (data.isEmpty()) {
             com.glebkrep.yandexcup.yoga.utils.Debug.log("No records...")
-        }
-        else{
+        } else {
             val subject = "Breathing Report"
             val message = ReportBuilder(data).generateMessage()
 
             val selectorIntent = Intent(Intent.ACTION_SENDTO)
-            selectorIntent.data = Uri.parse("mailto:"
+            selectorIntent.data = Uri.parse(
+                "mailto:"
 //                    + Uri.encode(email) + "?subject=" + Uri.encode(subject) + "&body=" + Uri.encode(message) +
 //                    "&to="+Uri.encode(email)
             )
@@ -63,7 +57,7 @@ class SendDataPageVM(application: Application):AndroidViewModel(application) {
             val emailIntent = Intent(Intent.ACTION_SEND)
             emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
             emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject)
-            emailIntent.putExtra(Intent.EXTRA_TEXT,message)
+            emailIntent.putExtra(Intent.EXTRA_TEXT, message)
             emailIntent.selector = selectorIntent
             try {
                 activity.startActivity(Intent.createChooser(emailIntent, "Send email..."))

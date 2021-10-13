@@ -12,11 +12,12 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.glebkrep.yandexcup.yoga.data.BreathingState
 import com.glebkrep.yandexcup.yoga.ui.theme.UiConsts
 
 @Composable
-fun BreathingPage(viewModel: BreathingPageVM = viewModel()) {
+fun BreathingPage(navController:NavController, viewModel: BreathingPageVM = viewModel()) {
     val pageState by viewModel.breathingState.observeAsState(BreathingState.NotStarted)
 
     Column(Modifier.fillMaxSize()) {
@@ -34,7 +35,12 @@ fun BreathingPage(viewModel: BreathingPageVM = viewModel()) {
                 SilenceBlock()
             }
         }
-
+        Button(onClick = {
+            viewModel.stopRecording()
+            navController.popBackStack()
+        }) {
+            Text(text = "Завершить сессию")
+        }
     }
 }
 
@@ -44,7 +50,7 @@ fun SilenceBlock() {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "-----")
+        Text(text = ".....")
     }
 }
 
@@ -54,9 +60,9 @@ fun NotStartedBlock(onStartClick: () -> (Unit)) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Start with inhaling!")
+        Text(text = "Начните со вдоха!")
         Button(onClick = { onStartClick.invoke() }) {
-            Text(text = "Start")
+            Text(text = "Начать")
         }
     }
 }
@@ -68,6 +74,6 @@ fun BreathingBlock(state: BreathingState) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Breathing ${if (isBreatheIn) "In" else "Out"}")
+        Text(text = if (isBreatheIn) "Вдох..." else "Выдох...")
     }
 }

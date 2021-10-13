@@ -77,4 +77,8 @@ class BreathingPageVM(application: Application) : AndroidViewModel(application) 
         super.onCleared()
         breathingDetector.stop()
     }
+
+    fun stopRecording() {
+        breathingDetector.stop()
+    }
 }

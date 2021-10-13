@@ -1,38 +1,58 @@
 package com.glebkrep.yandexcup.yoga.ui.pages.home
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.glebkrep.yandexcup.yoga.features.breatheDetector.BreathingDetector
 import com.glebkrep.yandexcup.yoga.ui.Screen
-import com.glebkrep.yandexcup.yoga.utils.getActivity
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionRequired
+import com.google.accompanist.permissions.rememberPermissionState
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun HomePage(outterNavController: NavController) {
-    val context = LocalContext.current
+    val recordAudioPermissionState =
+        rememberPermissionState(android.Manifest.permission.RECORD_AUDIO)
 
     Column(Modifier.fillMaxSize()) {
-        Button(onClick = {
-            //todo catch response with onActivityResult and pass it here
-            if (BreathingDetector.requestPermission(
-                    context.getActivity() ?: throw Exception("Activity can't be null")
-                )
-            ) {
-                outterNavController.navigate(Screen.BreathingPage.route)
+
+        PermissionRequired(
+            permissionState = recordAudioPermissionState,
+            permissionNotGrantedContent = {
+                Column {
+                    Text("Для работы приложения нужно разрешение на запись аудио")
+                    Row {
+                        Button(onClick = { recordAudioPermissionState.launchPermissionRequest() }) {
+                            Text("Предоставить разрешение!")
+                        }
+                    }
+                }
+            },
+            permissionNotAvailableContent = {
+                Column {
+                    Text(
+                        "Разрешение не было предоставлено, приложение не сможет работать..."
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
             }
-        }) {
-            Text(text = "Start exercise")
+        ) {
+            Text("Разрешение предоставлено")
+            Button(onClick = {
+                outterNavController.navigate(Screen.BreathingPage.route)
+            }) {
+                Text(text = "Начать тренировку (запись дыхания)")
+            }
         }
 
         Button(onClick = {
             outterNavController.navigate(Screen.StatsList.route)
         }) {
-            Text(text = "View stats")
+            Text(text = "Посмотреть записи (и отправить)")
         }
     }
 }

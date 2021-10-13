@@ -60,8 +60,7 @@ fun StatsItem(breathingItem:BreathingItem){
             .padding(UiConsts.padding)
             .border(1.dp, Color.LightGray),
     horizontalArrangement = Arrangement.SpaceBetween) {
-        Text(text = breathingItem.type.name,Modifier.padding(UiConsts.padding))
-        Text(text = "duration: ${breathingItem.durationMillis.millisToSeconds()}")
+        Text(text = "${breathingItem.type.label}(${breathingItem.durationMillis.millisToSeconds()})",Modifier.padding(UiConsts.padding))
         Column {
             Text(text = "start: ${breathingItem.startTimestamp.millisToHMS()}")
             Text(text = "end: ${breathingItem.endTimestamp.millisToHMS()}")
