@@ -28,5 +28,11 @@ fun HomePage(outterNavController: NavController) {
         }) {
             Text(text = "Start exercise")
         }
+
+        Button(onClick = {
+            outterNavController.navigate(Screen.StatsList.route)
+        }) {
+            Text(text = "View stats")
+        }
     }
 }

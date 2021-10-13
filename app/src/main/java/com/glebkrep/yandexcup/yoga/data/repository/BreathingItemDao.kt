@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface BreathingItemDao {
     @Query("select * from breathing_item_table order by start_time asc")
-    suspend fun getAllItems(): Flow<BreathingItem>
+    fun getAllItems(): Flow<List<BreathingItem>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(breathingItem: BreathingItem): Long

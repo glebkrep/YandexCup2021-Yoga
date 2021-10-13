@@ -5,9 +5,10 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.glebkrep.yandexcup.yoga.data.BreathingItem
 
 @TypeConverters(Converters::class)
-@Database(entities = [BreathingItemDao::class], version = 1)
+@Database(entities = [BreathingItem::class], version = 1)
 abstract class BreathingRoomDatabase : RoomDatabase() {
 
     abstract fun breathingItemDao(): BreathingItemDao

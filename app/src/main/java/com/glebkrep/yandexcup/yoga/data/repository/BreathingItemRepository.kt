@@ -3,7 +3,7 @@ package com.glebkrep.yandexcup.yoga.data.repository
 import com.glebkrep.yandexcup.yoga.data.BreathingItem
 
 class BreathingItemRepository(private val breathingItemDao: BreathingItemDao) {
-    suspend fun getAllNotifications() = breathingItemDao.getAllItems()
+    fun getAllBreathingItems() = breathingItemDao.getAllItems()
 
 
     suspend fun deleteById(id:Int){

@@ -17,7 +17,7 @@ sealed class BreathingState(val label:String) {
                 Pair(TypeBreath.BREATHE_IN,breatheIn.startTimeStamp)
             }
             is BreatheOut ->{
-                val breatheOut = this as BreatheIn
+                val breatheOut = this as BreatheOut
                 Pair(TypeBreath.BREATHE_OUT,breatheOut.startTimeStamp)
             }
             is Silence ->{
