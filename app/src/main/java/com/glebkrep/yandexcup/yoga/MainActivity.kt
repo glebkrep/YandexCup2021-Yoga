@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import com.glebkrep.yandexcup.yoga.ui.Screen
 import com.glebkrep.yandexcup.yoga.ui.pages.breathing.BreathingPage
 import com.glebkrep.yandexcup.yoga.ui.pages.home.HomePage
+import com.glebkrep.yandexcup.yoga.ui.pages.sendData.SendDataPage
 import com.glebkrep.yandexcup.yoga.ui.pages.stats.StatsPage
 import com.glebkrep.yandexcup.yoga.ui.theme.YogaTheme
 
@@ -38,8 +39,12 @@ class MainActivity : ComponentActivity() {
                     ) {
                         composable(Screen.Home.route) { HomePage(mainNavController) }
                         composable(Screen.BreathingPage.route) { BreathingPage() }
-                        composable(Screen.StatsList.route) { StatsPage() }
-
+                        composable(Screen.StatsList.route) {
+                            StatsPage() {
+                                mainNavController.navigate(Screen.SendData.route)
+                            }
+                        }
+                        composable(Screen.SendData.route) { SendDataPage() }
                     }
                 }
             }

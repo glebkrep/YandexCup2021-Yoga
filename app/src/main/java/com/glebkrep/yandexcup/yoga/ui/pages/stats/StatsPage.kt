@@ -4,6 +4,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,7 +21,7 @@ import com.glebkrep.yandexcup.yoga.utils.millisToHMS
 import com.glebkrep.yandexcup.yoga.utils.millisToSeconds
 
 @Composable
-fun StatsPage(statsVM: StatsPageVM = viewModel()){
+fun StatsPage(statsVM: StatsPageVM = viewModel(), onSendEmailClick:()->(Unit)){
 
     val state by statsVM.statsState.observeAsState(StatsState.Loading)
 
@@ -35,6 +36,13 @@ fun StatsPage(statsVM: StatsPageVM = viewModel()){
             is StatsState.Success ->{
                 LazyColumn(Modifier.fillMaxSize()){
                     val successState = state as StatsState.Success
+                    item {
+                        Button(onClick = {
+                            onSendEmailClick.invoke()
+                        }) {
+                            Text(text = "Отправить список тренеру Аркадию")
+                        }
+                    }
                     items(successState.breathingItems){
                         StatsItem(it)
                     }
