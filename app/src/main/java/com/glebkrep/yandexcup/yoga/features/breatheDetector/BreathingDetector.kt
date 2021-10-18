@@ -12,26 +12,25 @@ import org.tensorflow.lite.task.audio.classifier.AudioClassifier
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
 
-class BreathingDetector(context: Context) {
+class BreathingDetector (context: Context) {
     private var job: Job? =null
-    private val classifier: AudioClassifier = AudioClassifier.createFromFile(context, MODEL_PATH)
-    private val tensorAudio: TensorAudio = classifier.createInputTensorAudio()
-    private val record: AudioRecord = classifier.createAudioRecord()
-
-    private var timerTask: TimerTask? = null
+    val classifier: AudioClassifier = AudioClassifier.createFromFile(context, MODEL_PATH)
+    val record: AudioRecord = classifier.createAudioRecord()
 
     suspend fun startRecording(
         intervalMillis: Long = 500,
         detectedSound: (BreathingState) -> (Unit)
     ) {
-        record.startRecording()
-
-        var lastState: BreathingState = BreathingState.NotStarted
-        var lastBreathe: BreathingState = BreathingState.BreatheOut(0L)
-
         coroutineScope {
+
             job = launch {
-                timerTask = Timer().scheduleAtFixedRate(1, intervalMillis) {
+                var lastState: BreathingState = BreathingState.NotStarted
+                var lastBreathe: BreathingState = BreathingState.BreatheOut(0L)
+
+                val tensorAudio: TensorAudio = classifier.createInputTensorAudio()
+                record.startRecording()
+
+                Timer().scheduleAtFixedRate(1, intervalMillis) {
                     tensorAudio.load(record)
                     val output = classifier.classify(tensorAudio)
 
@@ -83,9 +82,6 @@ class BreathingDetector(context: Context) {
 
     fun stop() {
         record.stop()
-        classifier.close()
-        timerTask?.cancel()
-        timerTask = null
         job?.cancel()
         job = null
     }
