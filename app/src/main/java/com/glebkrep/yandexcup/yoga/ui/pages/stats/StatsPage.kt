@@ -28,10 +28,10 @@ fun StatsPage(statsVM: StatsPageVM = viewModel(), onSendEmailClick:()->(Unit)){
     Column(Modifier.fillMaxSize()) {
         when (state){
             is StatsState.Loading ->{
-                Text(text = "Loading..")
+                Text(text = "Loading..",Modifier.padding(UiConsts.padding))
             }
             is StatsState.NoStats ->{
-                Text(text = "No stats gathered...")
+                Text(text = "No stats gathered...",Modifier.padding(UiConsts.padding))
             }
             is StatsState.Success ->{
                 LazyColumn(Modifier.fillMaxSize()){
@@ -39,7 +39,7 @@ fun StatsPage(statsVM: StatsPageVM = viewModel(), onSendEmailClick:()->(Unit)){
                     item {
                         Button(onClick = {
                             onSendEmailClick.invoke()
-                        }) {
+                        },Modifier.padding(UiConsts.padding)) {
                             Text(text = "Отправить список тренеру Аркадию")
                         }
                     }

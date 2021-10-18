@@ -1,9 +1,7 @@
 package com.glebkrep.yandexcup.yoga.ui.pages.breathing
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -11,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.glebkrep.yandexcup.yoga.data.BreathingState
@@ -19,28 +18,34 @@ import com.glebkrep.yandexcup.yoga.ui.theme.UiConsts
 @Composable
 fun BreathingPage(navController:NavController, viewModel: BreathingPageVM = viewModel()) {
     val pageState by viewModel.breathingState.observeAsState(BreathingState.NotStarted)
+    Text(text = "Тренировка!", Modifier.padding(UiConsts.padding))
 
-    Column(Modifier.fillMaxSize()) {
-        Text(text = "Breathing page", Modifier.padding(UiConsts.padding))
-        when (pageState) {
-            is BreathingState.BreatheIn, is BreathingState.BreatheOut -> {
-                BreathingBlock(state = pageState)
-            }
-            is BreathingState.NotStarted -> {
-                NotStartedBlock() {
-                    viewModel.startRecording()
+    Column(
+        Modifier
+            .fillMaxSize()
+            .background(Color.LightGray),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+                when (pageState) {
+                    is BreathingState.BreatheIn, is BreathingState.BreatheOut -> {
+                        BreathingBlock(state = pageState)
+                    }
+                    is BreathingState.NotStarted -> {
+                        NotStartedBlock() {
+                            viewModel.startRecording()
+                        }
+                    }
+                    is BreathingState.Silence -> {
+                        SilenceBlock()
+                    }
                 }
-            }
-            is BreathingState.Silence -> {
-                SilenceBlock()
-            }
-        }
-        Button(onClick = {
-            viewModel.stopRecording()
-            navController.popBackStack()
-        }) {
-            Text(text = "Завершить сессию")
-        }
+                Button(onClick = {
+                    viewModel.stopRecording()
+                    navController.popBackStack()
+                },Modifier.padding(UiConsts.padding)) {
+                    Text(text = "Завершить сессию")
+                }
     }
 }
 
@@ -50,7 +55,7 @@ fun SilenceBlock() {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = ".....")
+        Text(text = ".....",Modifier.padding(UiConsts.padding))
     }
 }
 
@@ -60,9 +65,9 @@ fun NotStartedBlock(onStartClick: () -> (Unit)) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Начните со вдоха!")
-        Button(onClick = { onStartClick.invoke() }) {
-            Text(text = "Начать")
+        Text(text = "Начните со вдоха!",Modifier.padding(UiConsts.padding))
+        Button(onClick = { onStartClick.invoke() },Modifier.padding(UiConsts.padding)) {
+            Text(text = "Начать",)
         }
     }
 }
@@ -74,6 +79,6 @@ fun BreathingBlock(state: BreathingState) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = if (isBreatheIn) "Вдох..." else "Выдох...")
+        Text(text = if (isBreatheIn) "Вдох..." else "Выдох...",Modifier.padding(UiConsts.padding))
     }
 }
