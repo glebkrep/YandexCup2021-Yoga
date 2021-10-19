@@ -1,5 +1,6 @@
 package com.glebkrep.yandexcup.yoga.ui.pages.stats
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,8 +12,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.glebkrep.yandexcup.yoga.R
 import com.glebkrep.yandexcup.yoga.data.BreathingItem
 import com.glebkrep.yandexcup.yoga.data.StatsState
 import com.glebkrep.yandexcup.yoga.ui.theme.UiConsts
@@ -25,13 +28,13 @@ fun StatsPage(statsVM: StatsPageVM = viewModel(), onSendEmailClick:()->(Unit)){
 
     val state by statsVM.statsState.observeAsState(StatsState.Loading)
 
-    Column(Modifier.fillMaxSize()) {
+    Column(Modifier.fillMaxSize().background(Color.LightGray)) {
         when (state){
             is StatsState.Loading ->{
-                Text(text = "Loading..",Modifier.padding(UiConsts.padding))
+                Text(text = stringResource(R.string.loading),Modifier.padding(UiConsts.padding))
             }
             is StatsState.NoStats ->{
-                Text(text = "No stats gathered...",Modifier.padding(UiConsts.padding))
+                Text(text = stringResource(R.string.no_stats),Modifier.padding(UiConsts.padding))
             }
             is StatsState.Success ->{
                 LazyColumn(Modifier.fillMaxSize()){
@@ -40,7 +43,7 @@ fun StatsPage(statsVM: StatsPageVM = viewModel(), onSendEmailClick:()->(Unit)){
                         Button(onClick = {
                             onSendEmailClick.invoke()
                         },Modifier.padding(UiConsts.padding)) {
-                            Text(text = "Отправить список тренеру Аркадию")
+                            Text(text = stringResource(R.string.send_to_coach))
                         }
                     }
                     items(successState.breathingItems){

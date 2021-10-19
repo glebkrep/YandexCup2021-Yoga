@@ -13,15 +13,15 @@ sealed class BreathingState(val label:String) {
     fun mapToBreathingItem(endTimeStamp:Long):BreathingItem?{
         val typeAndStart = when (this){
             is BreatheIn ->{
-                val breatheIn = this as BreatheIn
+                val breatheIn = this
                 Pair(TypeBreath.BREATHE_IN,breatheIn.startTimeStamp)
             }
             is BreatheOut ->{
-                val breatheOut = this as BreatheOut
+                val breatheOut = this
                 Pair(TypeBreath.BREATHE_OUT,breatheOut.startTimeStamp)
             }
             is Silence ->{
-                val silence = this as Silence
+                val silence = this
                 Pair(TypeBreath.PAUSE,silence.startTimeStamp)
             }
             else ->{

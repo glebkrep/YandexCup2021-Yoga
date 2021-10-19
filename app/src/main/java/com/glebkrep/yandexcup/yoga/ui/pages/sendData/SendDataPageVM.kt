@@ -28,7 +28,7 @@ class SendDataPageVM(application: Application) : AndroidViewModel(application) {
 
     fun sendEmail(email: String, activity: Activity) {
         val repositorySnapshot = breathingItemRepository ?: return
-        val job = viewModelScope.launch(Dispatchers.Default) {
+        viewModelScope.launch(Dispatchers.Default) {
             repositorySnapshot.getAllBreathingItems()
                 .collect {
                     sendEmailWithData(email = email, it, activity)

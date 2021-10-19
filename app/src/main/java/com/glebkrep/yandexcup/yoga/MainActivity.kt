@@ -27,8 +27,6 @@ import com.glebkrep.yandexcup.yoga.ui.theme.YogaTheme
 //  - составлять список вдохов-выдохов с зафиксированным временем между ними,
 //  - отправлять список по электронной почте тренеру Аркадию.
 
-//TODO пройтись по ту-душкам
-//todo слегка потвикать юай
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +41,7 @@ class MainActivity : ComponentActivity() {
                         composable(Screen.Home.route) { HomePage(mainNavController) }
                         composable(Screen.BreathingPage.route) { BreathingPage(mainNavController) }
                         composable(Screen.StatsList.route) {
-                            StatsPage() {
+                            StatsPage {
                                 mainNavController.navigate(Screen.SendData.route)
                             }
                         }

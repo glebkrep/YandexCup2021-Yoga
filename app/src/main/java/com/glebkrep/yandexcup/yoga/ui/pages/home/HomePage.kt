@@ -1,14 +1,18 @@
 package com.glebkrep.yandexcup.yoga.ui.pages.home
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.glebkrep.yandexcup.yoga.R
 import com.glebkrep.yandexcup.yoga.ui.Screen
 import com.glebkrep.yandexcup.yoga.ui.theme.UiConsts
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -22,7 +26,10 @@ fun HomePage(outterNavController: NavController) {
         rememberPermissionState(android.Manifest.permission.RECORD_AUDIO)
 
     Column(
-        Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally,
+        Modifier
+            .fillMaxSize()
+            .background(Color.LightGray),
+        horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
 
@@ -30,7 +37,7 @@ fun HomePage(outterNavController: NavController) {
             permissionState = recordAudioPermissionState,
             permissionNotGrantedContent = {
                 Text(
-                    "Для работы приложения нужно разрешение на запись аудио",
+                    stringResource(R.string.permission_explanation),
                     Modifier.padding(UiConsts.padding),
                     textAlign = TextAlign.Center
                 )
@@ -39,13 +46,13 @@ fun HomePage(outterNavController: NavController) {
                         onClick = { recordAudioPermissionState.launchPermissionRequest() },
                         Modifier.padding(UiConsts.padding)
                     ) {
-                        Text("Предоставить разрешение!")
+                        Text(stringResource(R.string.request_permission))
                     }
                 }
             },
             permissionNotAvailableContent = {
                 Text(
-                    "Разрешение не было предоставлено, приложение не сможет работать...",
+                    stringResource(R.string.permission_fail),
                     Modifier.padding(UiConsts.padding)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -54,14 +61,14 @@ fun HomePage(outterNavController: NavController) {
             Button(onClick = {
                 outterNavController.navigate(Screen.BreathingPage.route)
             }, Modifier.padding(UiConsts.padding)) {
-                Text(text = "Начать тренировку (запись дыхания)")
+                Text(text = stringResource(R.string.start_activity))
             }
         }
 
         Button(onClick = {
             outterNavController.navigate(Screen.StatsList.route)
         }, Modifier.padding(UiConsts.padding)) {
-            Text(text = "Посмотреть записи (и отправить)")
+            Text(text = stringResource(R.string.look_into_records))
         }
     }
 }

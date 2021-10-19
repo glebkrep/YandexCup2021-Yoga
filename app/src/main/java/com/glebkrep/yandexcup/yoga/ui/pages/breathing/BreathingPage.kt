@@ -1,7 +1,10 @@
 package com.glebkrep.yandexcup.yoga.ui.pages.breathing
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -10,15 +13,17 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.glebkrep.yandexcup.yoga.R
 import com.glebkrep.yandexcup.yoga.data.BreathingState
 import com.glebkrep.yandexcup.yoga.ui.theme.UiConsts
 
 @Composable
-fun BreathingPage(navController:NavController, viewModel: BreathingPageVM = viewModel()) {
+fun BreathingPage(navController: NavController, viewModel: BreathingPageVM = viewModel()) {
     val pageState by viewModel.breathingState.observeAsState(BreathingState.NotStarted)
-    Text(text = "Тренировка!", Modifier.padding(UiConsts.padding))
+    Text(text = stringResource(R.string.training), Modifier.padding(UiConsts.padding))
 
     Column(
         Modifier
@@ -27,25 +32,28 @@ fun BreathingPage(navController:NavController, viewModel: BreathingPageVM = view
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-                when (pageState) {
-                    is BreathingState.BreatheIn, is BreathingState.BreatheOut -> {
-                        BreathingBlock(state = pageState)
-                    }
-                    is BreathingState.NotStarted -> {
-                        NotStartedBlock() {
-                            viewModel.startRecording()
-                        }
-                    }
-                    is BreathingState.Silence -> {
-                        SilenceBlock()
-                    }
+        when (pageState) {
+            is BreathingState.BreatheIn, is BreathingState.BreatheOut -> {
+                BreathingBlock(state = pageState)
+            }
+            is BreathingState.NotStarted -> {
+                NotStartedBlock {
+                    viewModel.startRecording()
                 }
-                Button(onClick = {
-                    viewModel.stopRecording()
-                    navController.popBackStack()
-                },Modifier.padding(UiConsts.padding)) {
-                    Text(text = "Завершить сессию")
-                }
+            }
+            is BreathingState.Silence -> {
+                SilenceBlock()
+            }
+            else -> {
+
+            }
+        }
+        Button(onClick = {
+            viewModel.stopRecording()
+            navController.popBackStack()
+        }, Modifier.padding(UiConsts.padding)) {
+            Text(text = stringResource(R.string.stop_session))
+        }
     }
 }
 
@@ -55,7 +63,7 @@ fun SilenceBlock() {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = ".....",Modifier.padding(UiConsts.padding))
+        Text(text = ".....", Modifier.padding(UiConsts.padding))
     }
 }
 
@@ -65,9 +73,12 @@ fun NotStartedBlock(onStartClick: () -> (Unit)) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Начните со вдоха!",Modifier.padding(UiConsts.padding))
-        Button(onClick = { onStartClick.invoke() },Modifier.padding(UiConsts.padding)) {
-            Text(text = "Начать",)
+        Text(
+            text = stringResource(R.string.start_with_breathing_in),
+            Modifier.padding(UiConsts.padding)
+        )
+        Button(onClick = { onStartClick.invoke() }, Modifier.padding(UiConsts.padding)) {
+            Text(text = stringResource(R.string.start))
         }
     }
 }
@@ -79,6 +90,9 @@ fun BreathingBlock(state: BreathingState) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = if (isBreatheIn) "Вдох..." else "Выдох...",Modifier.padding(UiConsts.padding))
+        Text(
+            text = if (isBreatheIn) stringResource(R.string.inhale) else stringResource(R.string.exhale),
+            Modifier.padding(UiConsts.padding)
+        )
     }
 }

@@ -10,7 +10,6 @@ import com.glebkrep.yandexcup.yoga.data.repository.BreathingItemRepository
 import com.glebkrep.yandexcup.yoga.data.repository.BreathingRoomDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class StatsPageVM(application: Application):AndroidViewModel(application) {
